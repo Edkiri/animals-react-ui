@@ -1,7 +1,11 @@
 import { SlSymbleFemale, SlSymbolMale } from "react-icons/sl";
 import { BsTrash3 } from "react-icons/bs";
+import { useContext } from "react";
+import AnimalContext from "../contexts/AnimalContext";
 
 export default function AnimalCard({ animal }) {
+  const { deleteAnimal } = useContext(AnimalContext);
+
   const genderIcon = animal.gender === 'female'
     ? <SlSymbleFemale className="text-md" />
     : <SlSymbolMale className="text-md" />;
@@ -12,7 +16,7 @@ export default function AnimalCard({ animal }) {
         {genderIcon}
         <h4 className="animal-name text-lg">{animal.name} / {animal.species}</h4>
       </div>
-      <button><BsTrash3 /></button>
+      <button onClick={() => deleteAnimal(animal.id)}><BsTrash3 /></button>
     </li>
   )
 }

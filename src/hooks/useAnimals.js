@@ -49,5 +49,15 @@ export default function useAnimals() {
       });
   };
 
-  return { loading, error, animals, createAnimal };
+  const deleteAnimal = async (id) => {
+    return fetch(`${API_URL}/animals/${id}`, {
+      method: "DELETE",
+    }).then((res) => {
+      if (res.status === 204) {
+        setAnimals(animals.filter((animal) => animal.id !== id));
+      }
+    });
+  };
+
+  return { loading, error, animals, createAnimal, deleteAnimal };
 }
