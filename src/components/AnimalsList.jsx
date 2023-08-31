@@ -3,6 +3,7 @@ import { useContext } from "react";
 import AnimalCard from "./AnimalCard";
 import AnimalContext from "../contexts/AnimalContext";
 import AppSpinner from "./AppSpinner";
+import { FaCat } from "react-icons/fa6";
 
 export default function AnimalsList() {
   const { loading, error, animals } = useContext(AnimalContext);
@@ -18,7 +19,13 @@ export default function AnimalsList() {
             <AnimalCard key={animal.id} animal={animal} />
           ))}
         </ul>
+      )}
 
+      {!loading && !animals.length && (
+        <div className="empty-list flex flex-col items-center mt-2">
+          <FaCat className="text-4xl" />
+          <span className="mt-2">Agrega tu primer animal</span>
+        </div>
       )}
 
       {!loading && error && (
