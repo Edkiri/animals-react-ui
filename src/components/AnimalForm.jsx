@@ -1,16 +1,34 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import useInputForm from "../hooks/useInputForm";
 import AppInput from "./AppInput";
 import validators from "../validators";
+import AnimalContext from "../contexts/AnimalContext";
+import AppSpinner from "./AppSpinner";
+import AppContext from "../contexts/AppContext";
 
 export default function AnimalForm() {
+  const { createAnimal } = useContext(AnimalContext);
+  const { toggleCreating } = useContext(AppContext);
   const name = useInputForm('', validators.minTextLength(4));
   const species = useInputForm('', validators.minTextLength(4));
   const [gender, setGender] = useState('male');
 
-  const handleCreate = (e) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleCreate = async (e) => {
     e.preventDefault();
-    console.log(name.value, species.value, gender)
+
+    if (name.error || name.value.trim() === '') return;
+    if (species.error || species.value.trim() === '') return;
+
+    setLoading(true);
+    await createAnimal({
+      name: name.value,
+      species: species.value,
+      gender
+    })
+    setLoading(false);
+    toggleCreating()
   }
 
   return (
@@ -34,7 +52,12 @@ export default function AnimalForm() {
           <option value='female'>Hembra</option>
         </select>
       </div>
-      <button className="text-center p-2 bg-slate-800 text-white w-full rounded mt-2 font-bold hover:bg-slate-700" type="submit">Agregar animal</button>
+      <button
+        disabled={loading}
+        className="text-center p-3 bg-slate-800 text-white w-full rounded mt-2 font-bold hover:bg-slate-700"
+        type="submit">
+        {loading ? <AppSpinner /> : 'Agregar animal'}
+      </button>
     </form>
   )
 }

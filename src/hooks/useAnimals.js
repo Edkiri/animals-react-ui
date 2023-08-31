@@ -12,7 +12,11 @@ export default function useAnimals() {
     fetch(`${API_URL}/animals`)
       .then((res) => res.json())
       .then((json) => {
-        setAnimals(json.data.animals);
+        if (json.success) {
+          setAnimals(json.data.animals);
+        } else {
+          throw new Error();
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -22,5 +26,28 @@ export default function useAnimals() {
       });
   }, []);
 
-  return { loading, error, animals };
+  const createAnimal = async (payload) => {
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    };
+    return fetch(`${API_URL}/animals`, requestOptions)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success) {
+          setAnimals([json.data.animal, ...animals]);
+          return json;
+        } else {
+          throw new Error("Error creating animal");
+        }
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  };
+
+  return { loading, error, animals, createAnimal };
 }
